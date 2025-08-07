@@ -1,61 +1,38 @@
+/* Controls */
+.controls {
+    padding: 10px;
+    text-align: center;
+    background: #f0f0f0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+/* Pitch: No zooming or scaling */
 .pitch {
-    width: 100%;
-    height: 600px;
-    background-color: #3a813a;
     position: relative;
-    background-image: linear-gradient(#358535 1px, transparent 1px),
-                    linear-gradient(90deg, #358535 1px, transparent 1px);
-    background-size: 20px 20px;
+    margin: 20px auto;
+    background-image: url('Football\ Pitch\ Texture.jpeg');
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    width: 430px;   /* Use your image's actual width */
+    height: 640px;  /* Use your image's actual height */
+    border: 3px solid #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
 }
 
-.field-lines {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    /* border: 2px solid #fff; */
-}
-
-.center-circle {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100px;
-    height: 100px;
-    /* border: 2px solid #fff; */
-    border-radius: 50%;
-}
-
-.penalty-box {
-    position: absolute;
-    width: 200px;
-    height: 300px;
-    /* border: 2px solid #fff; */
-}
-
-.penalty-box-top {
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.penalty-box-bottom {
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
+/* Player Element */
 .player {
     position: absolute;
-    width: 60px;
+    width: 50px;
     height: 60px;
     cursor: move;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 5px;
+    z-index: 10;
 }
 
 .player-dot {
@@ -64,34 +41,35 @@
     background: white;
     border: 2px solid #000;
     border-radius: 50%;
+    box-shadow: 0 0 5px rgba(0,0,0,0.4);
 }
 
 .player-name {
     color: white;
     font-family: Arial, sans-serif;
     font-size: 12px;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0, 0, 0, 0.7);
     padding: 2px 6px;
     border-radius: 3px;
     user-select: none;
+    text-align: center;
 }
 
-.player-name.editing {
-    background: rgba(255,255,255,0.9);
-    color: #000;
-    cursor: text;
-    outline: none;
+/* Goalkeeper Style */
+.goalkeeper .player-dot {
+    background: red;
 }
 
-.controls {
-    padding: 10px;
-    background: #f0f0f0;
+.goalkeeper .player-name {
+    color: red;
+    font-weight: bold;
 }
 
+/* Inline Input for Renaming */
 .name-input {
     position: absolute;
     background: white;
-    border: 1px solid #000;
+    border: 1px solid black;
     padding: 4px;
     font-size: 12px;
     font-family: Arial, sans-serif;

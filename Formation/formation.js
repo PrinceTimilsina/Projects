@@ -1,14 +1,15 @@
 const players = [
-    { name: 'MBAPPE', x: 50, y: 30 },
-    { name: 'VINICIUS', x: 20, y: 45 },
-    { name: 'RODRYGO', x: 80, y: 45 },
-    { name: 'JUDE', x: 50, y: 50 },
-    { name: 'CAMA', x: 35, y: 60 },
-    { name: 'FEDE', x: 65, y: 60 },
-    { name: 'MENDY', x: 20, y: 75 },
-    { name: 'RUDIGER', x: 40, y: 75 },
-    { name: 'ASENCIO', x: 60, y: 75 },
-    { name: 'TRENT', x: 80, y: 75 }
+    { name: 'ST', x: 43, y: 13 },
+    { name: 'LW', x: 14, y: 23 },
+    { name: 'RW', x: 73, y: 23 },
+    { name: 'CAM', x: 43, y: 29 },
+    { name: 'CM', x: 18, y: 39 },
+    { name: 'CM', x: 73, y: 39 },
+    { name: 'LB', x: 14, y: 59 },
+    { name: 'CB', x: 35, y: 68 },
+    { name: 'CB', x: 58, y: 68 },
+    { name: 'RB', x: 75, y: 59 },
+    { name: 'GK', x: 44, y: 83 } // ✅ moved up slightly
 ];
 
 const pitch = document.querySelector('.pitch');
