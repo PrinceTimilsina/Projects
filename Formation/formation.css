@@ -16,7 +16,7 @@
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
-    width: 430px;   /* Use your image's actual width */
+    width: 440px;   /* Use your image's actual width */
     height: 640px;  /* Use your image's actual height */
     border: 3px solid #fff;
     box-shadow: 0 0 10px rgba(0,0,0,0.4);
@@ -25,7 +25,7 @@
 /* Player Element */
 .player {
     position: absolute;
-    width: 50px;
+    width: 60px;
     height: 60px;
     cursor: move;
     display: flex;
