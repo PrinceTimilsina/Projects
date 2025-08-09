@@ -55,11 +55,11 @@
     text-align: center;
 }
 
-/* Goalkeeper Style */
+/* Goalkeeper Style */ 
 .goalkeeper .player-dot {
     background: red;
 }
-
+    
 .goalkeeper .player-name {
     color: red;
     font-weight: bold;
