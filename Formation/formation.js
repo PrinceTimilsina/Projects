@@ -112,7 +112,7 @@ function saveFormation() {
     document.querySelectorAll('.player').forEach(player => {
         players.push({   
             name: player.querySelector('.player-name').textContent,
-            x: (player.offsetLeft / pitch.offsetWidth) * 100,
+            x: (player.offsetLeft / pitch.offsetWidth) * 100,  
             y: (player.offsetTop / pitch.offsetHeight) * 100
         });
     });
