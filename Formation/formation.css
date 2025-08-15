@@ -76,3 +76,10 @@
     z-index: 1000;
     display: none;
 }
+
+.footer{
+      margin-top: 80px;
+      border: 1px solid black;
+      height: 400px;
+      width: 100%;
+}
