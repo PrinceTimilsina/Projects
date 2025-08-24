@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+   <title>P2P Converter | Free PNG to PDF & PDF to PNG Online Tool</title>
+      <meta name="description" content="P2P Converter is a free, fast, and secure online tool to convert PNG images to PDF files and PDF documents to PNG images. No signup needed. 100% browser-based.">
+      <meta name="keywords" content="png to pdf, pdf to png, free converter, online tool, image to pdf, document to png">
+      <link rel="canonical" href="https://yourdomain.com/">
+      <!-- <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='64' width='64'%3E%3Crect width='100%25' height='100%25' rx='12' ry='12' fill='%230f172a'/%3E%3Ctext x='50%25' y='56%25' font-family='Arial' font-size='34' text-anchor='middle' fill='%2338bdf8'%3EP2P%3C/text%3E%3C/svg%3E"> -->
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+      <link rel="stylesheet" href="style.css">
+       <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+	  <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+      <link rel="icon" href="P2P Converter.png" type="image/png">
+
+	</style>
+</head>
+<body>
+	<nav>
+		<div class="navbar">
+			 <img src="P2P Converter.png" alt="" style="height: 50px; width: 50px;">
+		</div>
+	</nav>
+  <header>
+    <div class="brand">
+      <div class="logo">P2P</div>
+      <div>
+	
+        <div class="title">P2P Converter</div>
+        <div class="subtitle">Lightning-fast PNG ↔ PDF, in your browser</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- PNG to PDF -->
+    <section class="card">
+      <h2>PNG → PDF</h2>
+      <p class="helper">Drop a PNG or choose a file. We’ll generate a single-page PDF.</p>
+      <div class="file" id="pngDrop">
+        <input type="file" id="imgInput" accept="image/png"/>
+        <label for="imgInput" class="file-label">📁 Choose PNG</label>
+        <div class="small" style="margin-top:8px;">or drag &amp; drop here</div>
+      </div>
+      <div class="actions">
+        <button id="convertToPDF" class="btn-primary">Convert to PDF</button>
+        <button id="clearImg" class="btn-ghost">Clear</button>
+      </div>
+      <div id="imgName" class="small" style="margin-top:10px; color:var(--muted)"></div>
+    </section>
+
+    <!-- PDF to PNG -->
+    <section class="card">
+      <h2>PDF → PNG</h2>
+      <p class="helper">Drop PDF & Download PNGs with one click.</p>
+      <div class="file" id="pdfDrop">
+        <input type="file" id="pdfInput" accept="application/pdf"/>
+        <label for="pdfInput" class="file-label">📄 Choose PDF</label>
+        <div class="small" style="margin-top:8px;">or drag &amp; drop here</div>
+      </div>
+      <div class="actions">
+        <button id="convertToPNG" class="btn-primary">Convert to PNG</button>
+        <button id="clearPdf" class="btn-ghost">Clear</button>
+      </div>
+      <div id="output" class="preview"></div>
+    </section>
+  </div>
+
+  <footer>
+    © <span id="year"></span> P2P Converter • Runs 100% in your browser
+  </footer>
+
+  <!-- Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

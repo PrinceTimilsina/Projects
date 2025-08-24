@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P2P Converter - Ultimate PDF Tools | Convert, Split, Merge & More</title>
+  <meta name="description" content="Free PDF toolkit: Convert PDF↔Word/Excel/PPT/JPG/PNG, split, merge, compress PDFs. 100% browser-based, secure & fast.">
+  <meta name="keywords" content="PDF converter, PDF tools, split PDF, merge PDF, PDF to Word, Excel to PDF, free online converter">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #6366f1;
+      --secondary: #06b6d4;
+      --accent: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      
+      --bg: #0f172a;
+      --card: rgba(30, 41, 59, 0.8);
+      --glass: rgba(255, 255, 255, 0.05);
+      
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --border: rgba(148, 163, 184, 0.1);
+      --glow: rgba(99, 102, 241, 0.15);
+    }
+
+    [data-theme="light"] {
+      --bg: #ffffff;
+      --card: rgba(248, 250, 252, 0.9);
+      --glass: rgba(255, 255, 255, 0.8);
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: rgba(148, 163, 184, 0.2);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: all 0.3s;
+    }
+
+    /* Nav */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      color: white;
+    }
+
+    .theme-btn {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 0.5rem 1rem;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .theme-btn:hover {
+      box-shadow: 0 0 0 3px var(--glow);
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+
+.hero h1 {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent; /* for Firefox */
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.25);
+}
+
+
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+
+    .badges {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    /* Grid */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+
+    .card {
+      background: var(--card);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15), 0 0 0 1px var(--glow);
+    }
+
+    .tool-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .card p {
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    /* File Drop */
+    .drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s;
+      background: var(--glass);
+      margin-bottom: 1rem;
+    }
+
+    .drop-zone:hover, .drop-zone.active {
+      border-color: var(--primary);
+      background: var(--glow);
+    }
+
+    .file-input { display: none; }
+
+    .file-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .file-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+    }
+
+    .actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--warning));
+      color: white;
+    }
+
+    .btn-secondary {
+      background: var(--glass);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Preview */
+    .preview {
+      margin-top: 1rem;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .preview-item {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      padding: 3rem 0;
+      margin-top: 4rem;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .footer h4 {
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .footer a {
+      color: var(--muted);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 0.5rem;
+      transition: color 0.3s;
+    }
+
+    .footer a:hover {
+      color: var(--primary);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .social {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .social a {
+      width: 40px;
+      height: 40px;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      transition: all 0.3s;
+    }
+
+    .social a:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .nav { padding: 1rem; }
+      .hero { padding: 2rem 1rem; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="nav">
+    <a href="#" class="brand">
+      <div class="logo">P2P</div>
+      <h1>P2P Converter</h1>
+    </a>
+    <button class="theme-btn" id="theme">🌙 Dark</button>
+  </nav>
+
+  <section class="hero">
+    <h1>Ultimate PDF Toolkit</h1>
+    <p>Convert, split, merge & transform documents instantly. 100% browser-based - secure & lightning fast.</p>
+    <div class="badges">
+      <span class="badge">✨ Free Forever</span>
+      <span class="badge">🔒 100% Secure</span>
+      <span class="badge">⚡ Lightning Fast</span>
+      <span class="badge">🌐 No Upload</span>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="grid">
+      <!-- PDF to Word -->
+      <div class="card">
+        <div class="tool-icon" style="background: linear-gradient(135deg, #3b82f6, #1e40af);">📄</div>
+        <h3>PDF → Word</h3>
+        <p>Convert PDFs to editable Word docs with perfect formatting</p>
+        <div class="drop-zone">
+          <input type="file" class="file-input" id="pdf-word" accept=".pdf">
+          <label for="pdf-word" class="file-btn">📄 Choose PDF</label>
+          <div style="margin-top: 0.5rem; color: var(--muted); font-size: 0.9rem;">or drag here</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="convert('pdf-word')">Convert</button>
+          <button class="btn btn-secondary" onclick="clear('pdf-word')">Clear</button>
+        </div>
+      </div>
+
+      <!-- Word to PDF -->
+      <div class="card">
+        <div class="tool-icon" style="background: linear-gradient(135deg, #1e40af, #3b82f6);">📝</div>
+        <h3>Word → PDF</h3>
+        <p>Transform Word documents to professional PDFs instantly</p>
+        <div class="drop-zone">
+          <input type="file" class="file-input" id="word-pdf" accept=".doc,.docx">
+          <label for="word-pdf" class="file-btn">📝 Choose Word</label>
+          <div style="margin-top: 0.5rem; color: var(--muted); font-size: 0.9rem;">or drag here</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="convert('word-pdf')">Convert</button>
+          <button class="btn btn-secondary" onclick="clear('word-pdf')">Clear</button>
+        </div>
+      </div>
+
+      <!-- Excel to PDF -->
+      <div class="card">
+        <div class="tool-icon" style="background: linear-gradient(135deg, #059669, #10b981);">📊</div>
+        <h3>Excel → PDF</h3>
+        <p>Convert spreadsheets to PDFs with all formatting intact</p>
+        <div class="drop-zone">
+          <input type="file" class="file-input" id="excel-pdf" accept=".xls,.xlsx">
+          <label for="excel-pdf" class="file-btn">📊 Choose Excel</label>
+          <div style="margin-top: 0.5rem; color: var(--muted); font-size: 0.9rem;">or drag here</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="convert('excel-pdf')">Convert</button>
+          <button class="btn btn-secondary" onclick="clear('excel-pdf')">Clear</button>
+        </div>
+      </div>
+
+      <!-- PDF to Excel -->
+      <div class="card">
+        <div class="tool-icon" style="background: linear-gradient(135deg, #10b981, #059669);">📈</div>
+        <h3>PDF → Excel</h3>
+        <p>Extract tables from PDFs into editable spreadsheets</p>
+        <div class="drop-zone">
+          <input type="file" class="file-input" id="pdf-excel" accept=".pdf">
+          <label for="pdf-excel" class="file-btn">📄 Choose PDF</label>
+          <div style="margin-top: 0.5rem; color: var(--muted); font-size: 0.9rem;">or drag here</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="convert('pdf-excel')">Convert</button>
+          <button class="btn btn-secondary" onclick="clear('pdf-excel')">Clear</button>
+        </div>
+      </div>
+
+      <!-- PPT to PDF -->
+      <div class="card">
+        <div class="tool-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">🎯</div>
+        <h3>PPT → PDF</h3>
+        <p>Convert presentations to PDFs for easy sharing</p>
+        <div class="drop-zone">
+          <input type="file" class="file-input" id="ppt-pdf" accept=".ppt,.pptx">
+          <label for="ppt-pdf" class="file-btn">🎯 Choose PPT</label>
+          <div style="margin-top: 0.5rem; color: var(--muted); font-size: 0.9rem;">or drag here</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="convert('ppt-pdf')">Convert</button>
+          <button class="btn btn-secondary" onclick="clear('ppt-pdf')">Clear</button>
+        </div>
+      </div>
+
+      <!-- PDF to PPT -->
+      <div class="card">
+        <div class="tool-icon" style="background: linear-gradient(135deg, #d97706, #f59e0b);">🎨</div>
+        <h3>PDF → PPT</h3>
+        <p>Transform PDFs into editable presentations</p>
+        <div class="drop-zone">
+          <input type="file" class="file-input" id="pdf-ppt" accept=".pdf">
+          <label for="pdf-ppt" class="file-btn">📄 Choose PDF</label>
+          <div style="margin-top: 0.5rem; color: var(--muted); font-size: 0.9rem;">or drag here</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="convert('pdf-ppt')">Convert</button>
+          <button class="btn btn-secondary" onclick="clear('pdf-ppt')">Clear</button>
+        </div>
+      </div>
+
+      <!-- PNG to PDF -->
+      <div class="card">
+        <div class="tool-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">🖼️</div>
+        <h3>PNG → PDF</h3>
+        <p>Convert images to PDFs with custom sizing</p>
+        <div class="drop-zone">
+          <input type="file" class="file-input" id="png-pdf" accept=".png">
+          <label for="png-pdf" class="file-btn">🖼️ Choose PNG</label>
+          <div style="margin-top: 0.5rem; color: var(--muted); font-size: 0.9rem;">or drag here</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="convertImageToPdf('png')">Convert</button>
+          <button class="btn btn-secondary" onclick="clear('png-pdf')">Clear</button>
+        </div>
+      </div>
+
+      <!-- JPG to PDF -->
+      <div class="card">
+        <div class="tool-icon" style="background: linear-gradient(135deg, #ec4899, #db2777);">📷</div>
+        <h3>JPG → PDF</h3>
+        <p>Transform JPEG images into PDF documents</p>
+        <div class="drop-zone">
+          <input type="file" class="file-input" id="jpg-pdf" accept=".jpg,.jpeg">
+          <label for="jpg-pdf" class="file-btn">📷 Choose JPG</label>
+          <div style="margin-top: 0.5rem; color: var(--muted); font-size: 0.9rem;">or drag here</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="convertImageToPdf('jpg')">Convert</button>
+          <button class="btn btn-secondary" onclick="clear('jpg-pdf')">Clear</button>
+        </div>
+      </div>
+
+      <!-- PDF to PNG -->
+      <div class="card">
+        <div class="tool-icon" style="background: linear-gradient(135deg, #7c3aed, #8b5cf6);">🎨</div>
+        <h3>PDF → PNG</h3>
+        <p>Convert PDF pages to high-quality images</p>
+        <div class="drop-zone">
+          <input type="file" class="file-input" id="pdf-png" accept=".pdf">
+          <label for="pdf-png" class="file-btn">📄 Choose PDF</label>
+          <div style="margin-top: 0.5rem; color: var(--muted); font-size: 0.9rem;">or drag here</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="convertPdfToImage('png')">Convert</button>
+          <button class="btn btn-secondary" onclick="clear('pdf-png')">Clear</button>
+        </div>
+        <div class="preview" id="pdf-png-preview"></div>
+      </div>
+
+      <!-- Split PDF -->
+      <div class="card">
+        <div class="tool-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">✂️</div>
+        <h3>Split PDF</h3>
+        <p>Split PDFs into individual pages or ranges</p>
+        <div class="drop-zone">
+          <input type="file" class="file-input" id="split-pdf" accept=".pdf">
+          <label for="split-pdf" class="file-btn">📄 Choose PDF</label>
+          <div style="margin-top: 0.5rem; color: var(--muted); font-size: 0.9rem;">or drag here</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="splitPdf()">Split</button>
+          <button class="btn btn-secondary" onclick="clear('split-pdf')">Clear</button>
+        </div>
+        <div class="preview" id="split-preview"></div>
+      </div>
+
+      <!-- Merge PDF -->
+      <div class="card">
+        <div class="tool-icon" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">🔗</div>
+        <h3>Merge PDF</h3>
+        <p>Combine multiple PDFs into a single document</p>
+        <div class="drop-zone">
+          <input type="file" class="file-input" id="merge-pdf" accept=".pdf" multiple>
+          <label for="merge-pdf" class="file-btn">📄 Choose PDFs</label>
+          <div style="margin-top: 0.5rem; color: var(--muted); font-size: 0.9rem;">select multiple files</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="mergePdf()">Merge</button>
+          <button class="btn btn-secondary" onclick="clear('merge-pdf')">Clear</button>
+        </div>
+        <div class="preview" id="merge-preview"></div>
+      </div>
+
+      <!-- Compress PDF -->
+      <div class="card">
+        <div class="tool-icon" style="background: linear-gradient(135deg, #0891b2, #06b6d4);">🗜️</div>
+        <h3>Compress PDF</h3>
+        <p>Reduce PDF file size while maintaining quality</p>
+        <div class="drop-zone">
+          <input type="file" class="file-input" id="compress-pdf" accept=".pdf">
+          <label for="compress-pdf" class="file-btn">📄 Choose PDF</label>
+          <div style="margin-top: 0.5rem; color: var(--muted); font-size: 0.9rem;">or drag here</div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="compressPdf()">Compress</button>
+          <button class="btn btn-secondary" onclick="clear('compress-pdf')">Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>Tools</h4>
+          <a href="#pdf-word">PDF to Word</a>
+          <a href="#word-pdf">Word to PDF</a>
+          <a href="#excel-pdf">Excel to PDF</a>
+          <a href="#split-pdf">Split PDF</a>
+        </div>
+        <div>
+          <h4>Features</h4>
+          <a href="#">100% Free</a>
+          <a href="#">No Registration</a>
+          <a href="#">Browser Based</a>
+          <a href="#">Secure Processing</a>
+        </div>
+        <div>
+          <h4>Support</h4>
+          <a href="#">Help Center</a>
+          <a href="#">Contact Us</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <a href="#">About Us</a>
+          <a href="#">Blog</a>
+          <a href="#">Careers</a>
+          <a href="#">Press</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="social">
+          <a href="#">📘</a>
+          <a href="#">🐦</a>
+          <a href="#">📷</a>
+          <a href="#">💼</a>
+        </div>
+        <p>&copy; 2024 P2P Converter. All rights reserved. Made with ❤️ for document freedom.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    // Theme Toggle
+    const themeBtn = document.getElementById('theme');
+    let isDark = true;
+
+    themeBtn.onclick = () => {
+      isDark = !isDark;
+      document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      themeBtn.textContent = isDark ? '🌙 Dark' : '☀️ Light';
+    };
+
+    // Drag & Drop
+    document.querySelectorAll('.drop-zone').forEach(zone => {
+      ['dragenter', 'dragover'].forEach(evt => {
+        zone.addEventListener(evt, e => {
+          e.preventDefault();
+          zone.classList.add('active');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(evt => {
+        zone.addEventListener(evt, e => {
+          e.preventDefault();
+          zone.classList.remove('active');
+          if (evt === 'drop') {
+            const input = zone.querySelector('input');
+            input.files = e.dataTransfer.files;
+          }
+        });
+      });
+    });
+
+    // Convert Functions
+    function convert(type) {
+      alert(`Converting ${type}... (Feature coming soon!)`);
+    }
+
+    function convertImageToPdf(format) {
+    const input = document.getElementById(`${format}-pdf`);
+    const file = input.files[0];
+    if (!file) return alert('Please select a file first');
+
+    const { jsPDF } = window.jspdf;
+    const reader = new FileReader();
+
+    reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+            const pdf = new jsPDF();
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            const maxWidth = 210;  // A4 page width in mm
+            const maxHeight = 297;  // A4 page height in mm
+            const ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
+            const pdfWidth = img.width * ratio;
+            const pdfHeight = img.height * ratio;
+
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0);
+
+            const imgData = canvas.toDataURL(`image/${format}`);
+            pdf.addImage(imgData, format.toUpperCase(), 0, 0, pdfWidth, pdfHeight);
+            pdf.save(`${file.name.split('.')[0]}.pdf`);
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+
+    function convertPdfToImage(format) {
+      const input = document.getElementById(`pdf-${format}`);
+      const file = input.files[0];
+      const preview = document.getElementById(`pdf-${format}-preview`);
+      
+      if (!file) return alert('Please select a PDF first');
+      
+      const reader = new FileReader();
+      reader.onload = () => {
+        const typedarray = new Uint8Array(reader.result);
+        preview.innerHTML = '';
+        
+        pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+          for (let i = 1; i <= pdf.numPages; i++) {
+            pdf.getPage(i).then(page => {
+              const scale = 1.5;
+              const viewport = page.getViewport({ scale });
+              
+              const canvas = document.createElement('canvas');
+              const ctx = canvas.getContext('2d');
+              canvas.width = viewport.width;
+              canvas.height = viewport.height;
+              
+              page.render({ canvasContext: ctx, viewport }).promise.then(() => {
+                const item = document.createElement('div');
+                item.className = 'preview-item';
+                
+                const info = document.createElement('span');
+                info.textContent = `Page ${i}`;
+                
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-primary';
+                btn.textContent = `Download ${format.toUpperCase()}`;
+                btn.onclick = () => {
+                  const link = document.createElement('a');
+                  link.download = `page-${i}.${format}`;
+                  link.href = canvas.toDataURL(`image/${format}`);
+                  link.click();
+                };
+                
+                item.appendChild(info);
+                item.appendChild(btn);
+                preview.appendChild(item);
+              });
+            });
+          }
+        });
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function splitPdf() {
+      const input = document.getElementById('split-pdf');
+      const preview = document.getElementById('split-preview');
+      const file = input.files[0];
+      
+      if (!file) return alert('Please select a PDF first');
+      
+      const reader = new FileReader();
+      reader.onload = () => {
+        const typedarray = new Uint8Array(reader.result);
+        preview.innerHTML = '';
+        
+        pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+          const item = document.createElement('div');
+          item.className = 'preview-item';
+          item.innerHTML = `
+            <span>Found ${pdf.numPages} pages</span>
+            <button class="btn btn-primary" onclick="downloadSplitPages(${pdf.numPages})">Download All Pages</button>
+          `;
+          preview.appendChild(item);
+        });
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+  function mergePdf() {
+      const input = document.getElementById('merge-pdf');
+      const preview = document.getElementById('merge-preview');
+      const files = Array.from(input.files);
+      
+      if (files.length < 2) return alert('Please select at least 2 PDF files');
+      
+      preview.innerHTML = '';
+      files.forEach((file, index) => {
+        const item = document.createElement('div');
+        item.className = 'preview-item';
+        item.innerHTML = `
+          <span>${index + 1}. ${file.name}</span>
+          <span style="color:var(--muted)">${(file.size/1024).toFixed(1)}KB</span>
+        `;
+        preview.appendChild(item);
+      });
+      
+      const mergeBtn = document.createElement('div');
+      mergeBtn.className = 'preview-item';
+      mergeBtn.innerHTML = `
+        <span>Ready to merge ${files.length} files</span>
+        <button class="btn btn-primary" onclick="downloadMergedPdf()">Download Merged PDF</button>
+      `;
+      preview.appendChild(mergeBtn);
+    }
+
+    function downloadMergedPdf() {
+      alert('Merge functionality would combine all PDFs here! (Advanced feature)');
+    }
+
+    function compressPdf() {
+      const input = document.getElementById('compress-pdf');
+      const file = input.files[0];
+      if (!file) return alert('Please select a PDF first');
+      
+      alert(`Would compress ${file.name} (${(file.size/1024/1024).toFixed(2)}MB) to reduce file size!`);
+    }
+
+    function clear(inputId) {
+      const input = document.getElementById(inputId);
+      input.value = '';
+      
+      // Clear preview if exists
+      const previewId = inputId + '-preview';
+      const preview = document.getElementById(previewId);
+      if (preview) preview.innerHTML = '';
+    }
