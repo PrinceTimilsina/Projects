@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>P2P Converter — Beta PDF Toolkit</title>
+<style>
+  :root{
+    --bg:#0f172a; --card:#0b1220; --muted:#94a3b8; --accent:#22c55e; --primary:#38bdf8;
+  }
+  *{box-sizing:border-box}
+  body{
+    font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    margin:0; min-height:100vh; background:linear-gradient(180deg,#071028 0%, #071833 100%);
+    color:#e6eef8; display:flex; flex-direction:column; align-items:center; padding:18px;
+  }
+  header{width:100%;max-width:1200px;margin-bottom:14px}
+  .brand{display:flex;gap:12px;align-items:center}
+  .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--primary),#60a5fa);display:grid;place-items:center;color:#021022;font-weight:800}
+  h1{margin:0;font-size:1.25rem}
+  .subtitle{color:var(--muted);font-size:.95rem;margin-top:4px}
+
+  .grid{width:100%;max-width:1200px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)) ;border:1px solid rgba(148,163,184,.08);padding:16px;border-radius:12px}
+  h2{margin:0 0 8px}
+  .helper{color:var(--muted);font-size:.9rem;margin-bottom:8px}
+  .file{border:1px dashed rgba(148,163,184,.12);padding:12px;border-radius:10px;text-align:center;background:rgba(255,255,255,0.01)}
+  input[type=file]{display:none}
+  .file-label{background:var(--primary);color:#041226;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700}
+  .actions{display:flex;gap:8px;margin-top:10px}
+  button{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:700}
+  .btn-primary{background:var(--accent);color:#021022}
+  .btn-ghost{background:transparent;border:1px solid rgba(148,163,184,.12);color:var(--muted)}
+  .preview{margin-top:12px; color:var(--muted); font-size:.9rem}
+  #output img{max-width:100%;display:block;margin:8px 0;border-radius:8px}
+  .thumbs{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .thumb{width:120px;border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,.04);cursor:grab;background:#021126}
+  .thumb img{width:100%;display:block}
+  .controls{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+  .small{font-size:.85rem;color:var(--muted)}
+
+  footer{margin-top:20px;color:var(--muted);font-size:.9rem}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .input-inline{display:inline-flex;gap:8px;align-items:center}
+  input[type=range]{width:140px}
+  /* drag styles */
+  .dragover{box-shadow:0 0 0 6px rgba(56,189,248,.06)}
+</style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">P2P</div>
+      <div>
+        <h1>P2P Converter — Beta PDF Toolkit</h1>
+        <div class="subtitle">PNG ↔ PDF • Word ↔ PDF (text) • Excel → PDF • PDF tools (split/merge/reorder/watermark/compress)</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="grid">
+
+    <!-- PNG → PDF -->
+    <section class="card" id="card-png2pdf">
+      <h2>PNG → PDF (multi-image)</h2>
+      <p class="helper">Select one or more PNG / JPG and convert to a single PDF.</p>
+      <div class="file" id="drop-img">
+        <input id="imgInput" type="file" accept="image/*" multiple>
+        <label for="imgInput" class="file-label">📁 Choose images</label>
+        <div class="small">or drag & drop images here</div>
+      </div>
+      <div class="actions">
+        <button class="btn-primary" id="convertImgsBtn">Convert to PDF</button>
+        <button class="btn-ghost" id="clearImgsBtn">Clear</button>
+      </div>
+      <div id="imgPreview" class="thumbs"></div>
+    </section>
+
+    <!-- PDF → PNG -->
+    <section class="card" id="card-pdf2png">
+      <h2>PDF → PNG</h2>
+      <p class="helper">Preview PDF pages and download PNGs.</p>
+      <div class="file" id="drop-pdf">
+        <input id="pdfInput" type="file" accept="application/pdf">
+        <label for="pdfInput" class="file-label">📄 Choose PDF</label>
+        <div class="small">or drag & drop PDF here</div>
+      </div>
+      <div class="actions">
+        <button class="btn-primary" id="convertToPNG">Convert to PNG</button>
+        <button class="btn-ghost" id="clearPdf">Clear</button>
+      </div>
+      <div id="output" class="preview"></div>
+    </section>
+
+    <!-- PDF Tools -->
+    <section class="card" id="card-pdftools">
+      <h2>PDF Toolkit — Split / Merge / Reorder / Rotate / Watermark / Compress</h2>
+      <p class="helper">Load a PDF to edit pages. Use Merge to combine PDFs.</p>
+
+      <div style="margin-bottom:8px;">
+        <label class="small">For Reorder/Rotate/Delete/Watermark/Compress: </label>
+        <div class="file" id="drop-pdf-edit">
+          <input id="pdfEditInput" type="file" accept="application/pdf">
+          <label for="pdfEditInput" class="file-label">📄 Load single PDF</label>
+          <div class="small">drag & drop or choose</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:8px;">
+        <label class="small">For Merge (select multiple PDFs): </label>
+        <div class="file">
+          <input id="pdfMergeInput" type="file" accept="application/pdf" multiple>
+          <label for="pdfMergeInput" class="file-label">📁 Choose PDFs to merge</label>
+        </div>
+      </div>
+
+      <div id="pagesArea" class="preview"></div>
+
+      <div class="controls">
+        <button class="btn-primary" id="saveEditedPdf">Save Edited PDF</button>
+        <button class="btn-ghost" id="splitSelected">Split selected pages → separate PDFs</button>
+        <button class="btn-primary" id="mergePdfsBtn">Merge selected PDFs</button>
+        <button class="btn-ghost" id="clearPdfEdit">Clear</button>
+      </div>
+
+      <div style="margin-top:10px;">
+        <label class="small">Watermark text:</label>
+        <div class="row" style="margin-top:6px">
+          <input id="watermarkText" placeholder="Confidential - P2P" style="padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,.06);width:220px">
+          <input id="watermarkSize" type="number" value="36" style="width:80px;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,.06)">
+          <input id="watermarkOpacity" type="range" min="0" max="1" step="0.05" value="0.15">
+          <button class="btn-primary" id="applyWatermark">Apply watermark</button>
+        </div>
+      </div>
+
+      <div style="margin-top:10px;">
+        <label class="small">Compress quality: </label>
+        <div class="row" style="margin-top:6px">
+          <input id="compressQuality" type="range" min="0.2" max="1" step="0.05" value="0.7">
+          <span class="small" id="compressVal">0.70</span>
+          <button class="btn-primary" id="compressPdf">Compress PDF (rebuild with images)</button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Word → PDF -->
+    <section class="card" id="card-word2pdf">
+      <h2>Word → PDF (text only)</h2>
+      <p class="helper">Extracts text from .docx and creates a basic PDF.</p>
+      <div class="file">
+        <input id="wordInput" type="file" accept=".docx">
+        <label for="wordInput" class="file-label">📄 Choose DOCX</label>
+      </div>
+      <div class="actions">
+        <button class="btn-primary" id="wordToPdf">Convert</button>
+      </div>
+      <div id="wordOut" class="preview"></div>
+    </section>
+
+    <!-- PDF → Word -->
+    <section class="card" id="card-pdf2word">
+      <h2>PDF → Word (text)</h2>
+      <p class="helper">Extracts text from PDF pages and makes a .docx (plain paragraphs).</p>
+      <div class="file">
+        <input id="pdfInputWord" type="file" accept="application/pdf">
+        <label for="pdfInputWord" class="file-label">📄 Choose PDF</label>
+      </div>
+      <div class="actions">
+        <button class="btn-primary" id="pdfToWord">Convert</button>
+      </div>
+      <div id="pdf2wordOut" class="preview"></div>
+    </section>
+
+    <!-- Excel → PDF -->
+    <section class="card" id="card-excel2pdf">
+      <h2>Excel → PDF (basic table)</h2>
+      <p class="helper">Reads first sheet and dumps rows into a PDF (simple layout).</p>
+      <div class="file">
+        <input id="excelInput" type="file" accept=".xlsx,.xls">
+        <label for="excelInput" class="file-label">📁 Choose Excel</label>
+      </div>
+      <div class="actions">
+        <button class="btn-primary" id="excelToPdf">Convert</button>
+      </div>
+      <div id="excelOut" class="preview"></div>
+    </section>
+
+  </main>
+
+  <footer>© <span id="year"></span> P2P Converter — Beta. Works in browser. Large files may be slow.</footer>
+
+<!-- Libraries (CDN) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+<script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.worker.min.js';</script>
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.3.2/docx.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script>
+(async()=>{
+
+// Helpers
+const byId=id=>document.getElementById(id);
+byId('year').textContent=new Date().getFullYear();
+const { jsPDF } = window.jspdf;
+const { PDFDocument, StandardFonts, rgb, degrees } = PDFLib;
+
+// small utility to file-saver blobs
+function saveBytes(bytes, filename){
+  const blob = new Blob([bytes], {type:'application/pdf'});
+  saveAs(blob, filename);
+}
+
+// Drag & drop helpers
+function setupDrop(dropEl, inputEl){
+  const box = byId(dropEl);
+  const inp = byId(inputEl);
+  ['dragenter','dragover'].forEach(ev=>box.addEventListener(ev,e=>{e.preventDefault();box.classList.add('dragover')}));
+  ['dragleave','drop'].forEach(ev=>box.addEventListener(ev,e=>{e.preventDefault();box.classList.remove('dragover')}));
+  box.addEventListener('drop', e=>{
+    e.preventDefault(); box.classList.remove('dragover');
+    const f = e.dataTransfer.files?.[0]; if(!f) return;
+    // if input accepts multiple still set files
+    inp.files = e.dataTransfer.files;
+    const ev = new Event('change'); inp.dispatchEvent(ev);
+  });
+}
+setupDrop('drop-img','imgInput');
+setupDrop('drop-pdf','pdfInput');
+setupDrop('drop-pdf-edit','pdfEditInput');
+
+// ---------- PNG/JPG Images -> PDF (multi) ----------
+const imgInput = byId('imgInput'), imgPreview = byId('imgPreview');
+imgInput.addEventListener('change', ()=>renderImagePreview());
+function renderImagePreview(){
+  imgPreview.innerHTML='';
+  const files = Array.from(imgInput.files||[]);
+  files.forEach(file=>{
+    const url = URL.createObjectURL(file);
+    const d = document.createElement('div'); d.className='thumb';
+    const img = document.createElement('img'); img.src=url;
+    d.appendChild(img); imgPreview.appendChild(d);
+  });
+}
+byId('convertImgsBtn').onclick = async ()=>{
+  const files = Array.from(imgInput.files||[]);
+  if(!files.length) return alert('Choose image(s) first');
+  const pdf = new jsPDF({unit:'pt',format:'a4'});
+  const pageW = pdf.internal.pageSize.getWidth();
+  const pageH = pdf.internal.pageSize.getHeight();
+  for(let i=0;i<files.length;i++){
+    const file = files[i];
+    const dataUrl = await fileToDataURL(file);
+    const img = new Image();
+    await new Promise((res,rej)=>{img.onload=res; img.onerror=rej; img.src=dataUrl});
+    // Fit image into page while preserving aspect
+    const iw=img.width, ih=img.height;
+    const ratio = Math.min(pageW/iw, pageH/ih);
+    const w = iw*ratio, h = ih*ratio;
+    const x = (pageW - w)/2, y=(pageH - h)/2;
+    if(i>0) pdf.addPage();
+    pdf.addImage(dataUrl, file.type.includes('png') ? 'PNG' : 'JPEG', x, y, w, h);
+  }
+  pdf.save('images.pdf');
+};
+
+// helper
+function fileToDataURL(file){
+  return new Promise((res,rej)=>{
+    const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file);
+  });
+}
+byId('clearImgsBtn').onclick=()=>{ imgInput.value=''; imgPreview.innerHTML=''; };
+
+// ---------- PDF -> PNG (preview + download) ----------
+byId('convertToPNG').onclick = async ()=>{
+  const file = byId('pdfInput').files?.[0];
+  if(!file) return alert('Select PDF first');
+  byId('output').innerHTML = 'Rendering pages…';
+  const array = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({data:array}).promise;
+  byId('output').innerHTML = '';
+  for(let p=1;p<=pdf.numPages;p++){
+    const page = await pdf.getPage(p);
+    const viewport = page.getViewport({scale:1.5});
+    const canvas = document.createElement('canvas');
+    canvas.width = viewport.width; canvas.height = viewport.height;
+    const ctx = canvas.getContext('2d');
+    await page.render({canvasContext:ctx, viewport}).promise;
+    const dataUrl = canvas.toDataURL('image/png');
+    const img = document.createElement('img'); img.src=dataUrl;
+    const a = document.createElement('a'); a.href=dataUrl; a.download=`page-${p}.png`; a.textContent=`⬇ Download Page ${p}`;
+    a.style.display='inline-block'; a.style.marginBottom='10px';
+    byId('output').appendChild(img);
+    byId('output').appendChild(a);
+  }
+};
+byId('clearPdf').onclick = ()=>{ byId('pdfInput').value=''; byId('output').innerHTML=''; };
+
+// ---------- Word -> PDF (mammoth -> jsPDF text) ----------
+byId('wordToPdf').onclick = async ()=>{
+  const f = byId('wordInput').files?.[0]; if(!f) return alert('Choose a DOCX file');
+  const ab = await f.arrayBuffer();
+  try{
+    const result = await mammoth.extractRawText({arrayBuffer:ab});
+    const text = result.value || '';
+    const pdf = new jsPDF();
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const margin = 20, lineHeight = 10;
+    const txtLines = pdf.splitTextToSize(text, pageWidth - margin*2);
+    let y = 20;
+    for(const line of txtLines){
+      if(y > pdf.internal.pageSize.getHeight()-30){ pdf.addPage(); y=20; }
+      pdf.text(line, margin, y);
+      y += lineHeight;
+    }
+    pdf.save((f.name.replace(/\.[^.]+$/,'') || 'document') + '.pdf');
+  }catch(err){ alert('Conversion failed: ' + err.message); }
+};
+
+// ---------- PDF -> Word (.docx simple text) ----------
+byId('pdfToWord').onclick = async ()=>{
+  const f = byId('pdfInputWord').files?.[0]; if(!f) return alert('Choose a PDF file');
+  const ab = await f.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({data:ab}).promise;
+  let fullText = '';
+  for(let i=1;i<=pdf.numPages;i++){
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    const pageText = content.items.map(it => it.str).join(' ');
+    fullText += pageText + '\n\n';
+  }
+  // create docx
+  const doc = new docx.Document();
+  const paragraphs = fullText.split('\n').map(ln => new docx.Paragraph(ln));
+  doc.addSection({children: paragraphs});
+  const blob = await docx.Packer.toBlob(doc);
+  saveAs(blob, (f.name.replace(/\.[^.]+$/,'') || 'converted') + '.docx');
+};
+
+// ---------- Excel -> PDF (basic) ----------
+byId('excelToPdf').onclick = async ()=>{
+  const f = byId('excelInput').files?.[0]; if(!f) return alert('Choose Excel file');
+  const ab = await f.arrayBuffer();
+  const wb = XLSX.read(new Uint8Array(ab), {type:'array'});
+  const first = wb.SheetNames[0];
+  const aoa = XLSX.utils.sheet_to_json(wb.Sheets[first], {header:1});
+  const pdf = new jsPDF();
+  const margin=20; let y=20; const lineHeight=8;
+  aoa.forEach(row=>{
+    const line = row.map(c => c===undefined?'':String(c)).join('   |   ');
+    const lines = pdf.splitTextToSize(line, pdf.internal.pageSize.getWidth()-margin*2);
+    lines.forEach(ln=>{
+      pdf.text(ln, margin, y);
+      y += lineHeight;
+      if(y > pdf.internal.pageSize.getHeight()-20){ pdf.addPage(); y=20; }
+    });
+  });
+  pdf.save((f.name.replace(/\.[^.]+$/,'')||'sheet') + '.pdf');
+};
+
+// ---------- PDF Toolkit (split / merge / reorder / rotate / watermark / compress) ----------
+let currentPdfArrayBuffer = null;
+let currentPdfPages = []; // will hold objects {pageNum, dataUrl (thumb), rotation, keep:boolean}
+const pagesArea = byId('pagesArea');
+
+byId('pdfEditInput').addEventListener('change', async (e)=>{
+  const f = e.target.files?.[0]; if(!f) return;
+  currentPdfArrayBuffer = await f.arrayBuffer();
+  await loadPdfForEdit(currentPdfArrayBuffer);
+});
+
+async function loadPdfForEdit(arrayBuffer){
+  pagesArea.innerHTML = 'Rendering pages…';
+  const pdf = await pdfjsLib.getDocument({data:arrayBuffer}).promise;
+  currentPdfPages = [];
+  for(let i=1;i<=pdf.numPages;i++){
+    const page = await pdf.getPage(i);
+    const viewport = page.getViewport({scale:0.9});
+    const canvas = document.createElement('canvas');
+    canvas.width = viewport.width; canvas.height = viewport.height;
+    const ctx = canvas.getContext('2d');
+    await page.render({canvasContext:ctx, viewport}).promise;
+    const dataUrl = canvas.toDataURL('image/png');
+    currentPdfPages.push({pageNum:i, dataUrl, rotation:0, keep:true});
+  }
+  renderPagesUI();
+}
+
+function renderPagesUI(){
+  pagesArea.innerHTML = '';
+  if(!currentPdfPages.length){ pagesArea.innerHTML = '<div class="small">No PDF loaded.</div>'; return; }
+  const container = document.createElement('div');
+  container.className='thumbs';
+  currentPdfPages.forEach((p, idx)=>{
+    const box = document.createElement('div'); box.className='thumb'; box.draggable=true; box.dataset.index=idx;
+    const img = document.createElement('img'); img.src = p.dataUrl; img.alt = `Page ${p.pageNum}`;
+    const meta = document.createElement('div'); meta.style.padding='6px'; meta.style.display='flex'; meta.style.justifyContent='space-between'; meta.style.alignItems='center';
+    meta.style.background='rgba(0,0,0,.15)'; meta.style.fontSize='12px';
+    const txt = document.createElement('div'); txt.textContent = `#${p.pageNum}`;
+    const btns = document.createElement('div');
+    const rotL = document.createElement('button'); rotL.textContent='⟲'; rotL.title='Rotate left'; rotL.style.marginRight='6px';
+    rotL.onclick = ()=>{ p.rotation = (p.rotation-90)%360; updateThumbRotation(idx); };
+    const rotR = document.createElement('button'); rotR.textContent='⟳'; rotR.title='Rotate right'; rotR.onclick = ()=>{ p.rotation = (p.rotation+90)%360; updateThumbRotation(idx); };
+    const del = document.createElement('button'); del.textContent='✕'; del.title='Remove page'; del.onclick = ()=>{ p.keep = false; updateThumbVisibility(idx); };
+    btns.appendChild(rotL); btns.appendChild(rotR); btns.appendChild(del);
+    meta.appendChild(txt); meta.appendChild(btns);
+    box.appendChild(img); box.appendChild(meta);
+    // drag events
+    box.addEventListener('dragstart', (ev)=>{ ev.dataTransfer.setData('text/plain', idx); box.style.opacity='0.5'; });
+    box.addEventListener('dragend', ()=>{ box.style.opacity='1'; });
+    box.addEventListener('dragover', (ev)=>{ ev.preventDefault(); });
+    box.addEventListener('drop', (ev)=>{ ev.preventDefault(); const from = Number(ev.dataTransfer.getData('text/plain')); const to = Number(box.dataset.index); swapPages(from,to); renderPagesUI(); });
+    container.appendChild(box);
+  });
+  pagesArea.appendChild(container);
+  pagesArea.appendChild(document.createElement('br'));
+  pagesArea.appendChild(document.createTextNode('Drag thumbnails to reorder. Use rotate or ✕ to remove pages. Removed pages will not be included when saving.'));
+}
+
+function swapPages(a,b){
+  const tmp = currentPdfPages[a]; currentPdfPages[a]=currentPdfPages[b]; currentPdfPages[b]=tmp;
+}
+
+function updateThumbRotation(idx){
+  // rotate visual thumbnail using CSS transform
+  const thumb = pagesArea.querySelector(`[data-index="${idx}"]`);
+  if(!thumb) return;
+  thumb.querySelector('img').style.transform = `rotate(${currentPdfPages[idx].rotation}deg)`;
+}
+function updateThumbVisibility(idx){
+  const thumb = pagesArea.querySelector(`[data-index="${idx}"]`);
+  if(!thumb) return;
+  thumb.style.opacity = currentPdfPages[idx].keep ? '1' : '0.45';
+  thumb.style.filter = currentPdfPages[idx].keep ? '' : 'grayscale(80%)';
+}
+
+// Save edited PDF: copy pages into new PDF respecting order, rotation, excludes.
+byId('saveEditedPdf').onclick = async ()=>{
+  if(!currentPdfArrayBuffer) return alert('Load a PDF first');
+  const srcDoc = await PDFDocument.load(currentPdfArrayBuffer);
+  const outDoc = await PDFDocument.create();
+  // copy pages in the order of currentPdfPages where keep==true
+  const pageIndices = currentPdfPages.map(p=>p.pageNum-1);
+  // copy pages all at once then selectively add (we need to map src pages)
+  const copied = await outDoc.copyPages(srcDoc, pageIndices);
+  // But we might have removed pages or reordered; so iterate currentPdfPages:
+  let addIdx = 0;
+  for(const p of currentPdfPages){
+    if(!p.keep){ addIdx++; continue; }
+    const page = copied[addIdx];
+    // apply rotation if needed
+    if(p.rotation && p.rotation%360 !== 0){
+      page.setRotation(degrees(p.rotation));
+    }
+    outDoc.addPage(page);
+    addIdx++;
+  }
+  const pdfBytes = await outDoc.save();
+  saveBytes(pdfBytes, 'edited.pdf');
+};
+
+// Split selected pages -> separate PDFs (here "selected" means pages kept individually: we create separate file per kept page)
+byId('splitSelected').onclick = async ()=>{
+  if(!currentPdfArrayBuffer) return alert('Load a PDF first');
+  const srcDoc = await PDFDocument.load(currentPdfArrayBuffer);
+  for(let i=0;i<currentPdfPages.length;i++){
+    const p = currentPdfPages[i];
+    if(!p.keep) continue;
+    const out = await PDFDocument.create();
+    const [copied] = await out.copyPages(srcDoc, [p.pageNum-1]);
+    // apply rotation if any
+    if(p.rotation && p.rotation%360 !== 0) copied.setRotation(degrees(p.rotation));
+    out.addPage(copied);
+    const bytes = await out.save();
+    saveBytes(bytes, `page-${p.pageNum}.pdf`);
+  }
+};
+
+// Merge multiple PDFs
+byId('mergePdfsBtn').onclick = async ()=>{
+  const files = Array.from(byId('pdfMergeInput').files||[]);
+  if(!files.length) return alert('Choose multiple PDF files to merge');
+  const out = await PDFDocument.create();
+  for(const f of files){
+    const ab = await f.arrayBuffer();
+    const src = await PDFDocument.load(ab);
+    const indices = src.getPageIndices();
+    const copied = await out.copyPages(src, indices);
+    copied.forEach(p=>out.addPage(p));
+  }
+  const bytes = await out.save();
+  saveBytes(bytes, 'merged.pdf');
+};
+
+// Watermark
+byId('applyWatermark').onclick = async ()=>{
+  const txt = byId('watermarkText').value.trim(); if(!txt) return alert('Enter watermark text');
+  if(!currentPdfArrayBuffer) return alert('Load a PDF to watermark');
+  const quality = Number(byId('watermarkOpacity').value);
+  const size = Number(byId('watermarkSize').value) || 36;
+  const src = await PDFDocument.load(currentPdfArrayBuffer);
+  const out = await PDFDocument.create();
+  const copied = await out.copyPages(src, src.getPageIndices());
+  const helv = await out.embedFont(StandardFonts.Helvetica);
+  for(const p of copied){
+    out.addPage(p);
+  }
+  // draw watermark on each page
+  const pages = out.getPages();
+  pages.forEach(pg=>{
+    const { width, height } = pg.getSize();
+    pg.drawText(txt, {
+      x: width/2 - (txt.length * (size/4)),
+      y: height/2,
+      size,
+      font: helv,
+      color: rgb(0.8,0.8,0.8),
+      rotate: degrees(-35),
+      opacity: quality
+    });
+  });
+  const bytes = await out.save();
+  saveBytes(bytes, 'watermarked.pdf');
+};
+
+// Compress PDF: render each page to canvas as JPEG at desired quality and rebuild PDF via jsPDF
+byId('compressQuality').addEventListener('input', e=>{ byId('compressVal').textContent = Number(e.target.value).toFixed(2);});
+byId('compressPdf').onclick = async ()=>{
+  if(!currentPdfArrayBuffer) return alert('Load a PDF to compress');
+  const quality = Number(byId('compressQuality').value);
+  const array = currentPdfArrayBuffer;
+  const pdf = await pdfjsLib.getDocument({data:array}).promise;
+  const outPdf = new jsPDF({unit:'pt',format:'a4'});
+  const pw = outPdf.internal.pageSize.getWidth();
+  const ph = outPdf.internal.pageSize.getHeight();
+  for(let p=1;p<=pdf.numPages;p++){
+    const page = await pdf.getPage(p);
+    // scale to A4 width proportionally
+    const viewport = page.getViewport({scale:1.5});
+    const canvas = document.createElement('canvas');
+    canvas.width = viewport.width; canvas.height = viewport.height;
+    const ctx = canvas.getContext('2d');
+    await page.render({canvasContext:ctx,viewport}).promise;
+    // convert to JPEG with quality
+    const jpeg = canvas.toDataURL('image/jpeg', quality);
+    const img = new Image();
+    await new Promise((res,rej)=>{ img.onload=res; img.onerror=rej; img.src=jpeg; });
+    // fit image to page
+    const ratio = Math.min(pw/img.width, ph/img.height);
+    const w = img.width * ratio, h = img.height * ratio;
+    const x = (pw-w)/2, y=(ph-h)/2;
+    if(p>1) outPdf.addPage();
+    outPdf.addImage(jpeg, 'JPEG', x, y, w, h);
+  }
+  outPdf.save('compressed.pdf');
+};
+
+// ---------- Merge / Re-order support note ----------
+byId('clearPdfEdit').onclick = ()=>{ currentPdfArrayBuffer=null; currentPdfPages=[]; pagesArea.innerHTML=''; byId('pdfEditInput').value=''; byId('pdfMergeInput').value=''; };
+
+// Utilities: small wrapper to convert dataURL to Uint8Array
+function dataURLtoUint8Array(dataURL){
+  const base64 = dataURL.split(',')[1];
+  const binStr = atob(base64);
+  const len = binStr.length;
+  const u8 = new Uint8Array(len);
+  for(let i=0;i<len;i++) u8[i] = binStr.charCodeAt(i);
+  return u8;
+}
+
+// ---------- Small niceties: auto-preview when user drops a PDF into toolkit (load for edit) ----------
+byId('pdfInput').addEventListener('change', ()=>{ byId('output').innerHTML=''; });
+byId('pdfMergeInput').addEventListener('change', ()=>{ /* no preview needed */ });
+
+// ---------- Simple history (localStorage) — last 6 conversions (store small dataURLs, careful with size) ----------
+function pushHistory(name, dataUrl){
+  try{
+    const MAX = 6;
+    let hist = JSON.parse(localStorage.getItem('p2p_history')||'[]');
+    hist.unshift({name, dataUrl, when: Date.now()});
+    hist = hist.slice(0,MAX);
+    localStorage.setItem('p2p_history', JSON.stringify(hist));
+  }catch(e){}
+}
+// Note: I did not display history UI to keep page manageable — add if you want.
+
+// Done
+console.log('P2P Converter Beta (client) ready');
+
+})(); // IIFE
+</script>
+</body>
+</html>

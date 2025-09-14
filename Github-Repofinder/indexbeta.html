@@ -4,17 +4,114 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Github</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
-	<link rel="preconnect" href="https://fonts.googleapis.com">
+	  <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="style.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="stylebeta.css">
 </head>
 <body>
-<h1>Hello.</h1>
+  <div class="main">
+     <div class="search">
+          <div class="searchbox">
+		        <div class="input-wrapper">
+                       <input type="text" id="searchInput" placeholder="   Search Repo">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                 </div>
+	    	     <img src="png1.png" alt="image">
+          </div>
+    </div>
+</div>
+   <div class="hero">
+	<div id="results"></div>
+   </div>
+
+<footer>
+  <div class="footer-top">
+    <div class="footer-left">
+      <p class="tagline">A space to find repo</p>
+    </div>
+
+    <div class="footer-right">
+      <a href="#">Home</a>
+      <a href="https://github.com/PrinceTimilsina" target="_blank">Visit Me</a>
+      <div class="contact">
+        <p>Contact</p>
+        <p>timilsinaprince07@gmail.com</p>
+        <p>timilsinaprince.js@gmail.com</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p class="small" style="margin-right: 1125px;">Github <img src="githublogo.png" alt="Github Logo"></p>
+    <h2>REPOFINDER</h2>
+  </div>
+</footer>
+
+<script>
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+async function searchRepos() {
+  let query = document.getElementById("searchInput").value.trim();
+  let resultsDiv = document.getElementById("results"); // ✅ declare first
+
+  if (!query) return;
+
+  // ✅ show loading text
+  resultsDiv.innerHTML = "<p style='color:#000; font-size:18px;'>Loading...</p>";
+
+  try {
+    let url = `https://api.github.com/search/repositories?q=${encodeURIComponent(query)}`;
+    let response = await fetch(url);
+    let data = await response.json();
+
+    // clear loading text
+    resultsDiv.innerHTML = "";
+
+    if (data.items && data.items.length) {
+      data.items.slice(0, 10).forEach(repo => {
+        const desc = repo.description ? escapeHtml(repo.description) : "No description available";
+        resultsDiv.innerHTML += `
+          <div class="repo">
+            <a class="title" href="${repo.html_url}" target="_blank" rel="noopener noreferrer">${repo.full_name}</a>
+            <div class="owner">by ${repo.owner.login}</div>
+            <div class="desc">${desc}</div>
+            <div class="meta">⭐ ${repo.stargazers_count}  &nbsp; | &nbsp; 🍴 ${repo.forks_count}</div>
+          </div>
+        `;
+      });
+    } else {
+      resultsDiv.innerHTML = "<p>No results found.</p>";
+    }
+  } catch (err) {
+    resultsDiv.innerHTML = "<p>Error fetching results. Try again!</p>";
+    console.error(err);
+  }
+}
+
+// Listen for Enter key
+document.getElementById("searchInput").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") searchRepos();
+});
+
+</script>
+
 </body>
 </html>
 	

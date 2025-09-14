@@ -1,0 +1,12 @@
+.main{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+    margin-top: 200px;
+}
+.face{
+	background-color: antiquewhite;
+	height: 200px;
+	width: 200px;
+
+}
